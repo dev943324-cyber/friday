@@ -17,11 +17,21 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          workdir: .
-          buildozer_version: stable
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev
+          pip install --upgrade pip "cython<3.0" buildozer
+
+      - name: Build with Buildozer
+        run: |
+          buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
