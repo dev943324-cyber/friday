@@ -24,16 +24,22 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           sudo apt update -y
-          sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev libltdl-dev
+          sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev libltdl-dev ccache
           pip install --upgrade pip
-          pip install "cython==0.29.36" buildozer
+          pip install buildozer cython
 
       - name: Build with Buildozer
         run: |
           buildozer -v android debug
+
+      - name: Show Error if Failed
+        if: failure()
+        run: |
+          echo "==================== EXACT ERROR ===================="
+          tail -n 60 ~/.buildozer/logs/* || tail -n 60 .buildozer/logs/* || true
 
       - name: Upload APK
         if: success()
