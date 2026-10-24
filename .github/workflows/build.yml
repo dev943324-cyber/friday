@@ -29,17 +29,17 @@ jobs:
           sudo apt update -y
           sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev libltdl-dev ccache
           pip install --upgrade pip
-          pip install buildozer cython
+          pip install "cython<3.0" buildozer
 
       - name: Build with Buildozer
         run: |
-          buildozer -v android debug
+          buildozer -v android debug 2>&1 | tee buildozer.log
 
       - name: Show Error if Failed
         if: failure()
         run: |
           echo "==================== EXACT ERROR ===================="
-          tail -n 60 ~/.buildozer/logs/* || tail -n 60 .buildozer/logs/* || true
+          tail -n 120 buildozer.log
 
       - name: Upload APK
         if: success()
