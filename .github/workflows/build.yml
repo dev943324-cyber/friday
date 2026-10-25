@@ -33,13 +33,14 @@ jobs:
 
       - name: Build with Buildozer
         run: |
+          set -o pipefail
           buildozer -v android debug 2>&1 | tee buildozer.log
 
-      - name: Show Error if Failed
-        if: failure()
+      - name: Print Last Error Lines
+        if: always()
         run: |
-          echo "==================== EXACT ERROR ===================="
-          tail -n 120 buildozer.log
+          echo "==================== LAST 50 LINES ===================="
+          tail -n 50 buildozer.log
 
       - name: Upload APK
         if: success()
